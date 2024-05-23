@@ -1,57 +1,69 @@
-class coreHttp {
-  constructor(baseURL) {
-    this.baseURL = baseURL;
-  }
+// Constructor to create an XHR object
+function coreHTTP() {
+  this.http = new XMLHttpRequest();
+}
 
-  async request(method, route, params = {}, body = null) {
-    try {
-      let url = new URL(`${this.baseURL}${route}`);
-      Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+/* <<< HTTP GET request >>> */
+coreHTTP.prototype.get = function(url, callback) {
+  // Open the connection
+  this.http.open("GET", url);
 
-      const options = {
-        method: method.toUpperCase(),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-
-      if (body) {
-        options.body = JSON.stringify(body);
-      }
-
-      const response = await fetch(url, options);
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data;
-
-    } catch (error) {
-      console.error('Request failed', error);
-      return { error: error.message };
+  // Process the request when it is returned.
+  this.http.onload = () => {
+    if (this.http.status >= 200 && this.http.status <= 299) {
+      callback(null, this.http.responseText);
+    } else {
+      callback(`GET Error: ${this.http.status}`);
     }
   }
 
-  get(route, params = {}) {
-    return this.request('GET', route, params);
-  }
-
-  post(route, body) {
-    return this.request('POST', route, {}, body);
-  }
-
-  put(route, body) {
-    return this.request('PUT', route, {}, body);
-  }
-
-  delete(route, params = {}) {
-    return this.request('DELETE', route, params);
-  }
-
-  patch(route, body) {
-    return this.request('PATCH', route, {}, body);
-  }
+  // Send the request
+  this.http.send();
 }
 
+/* <<< HTTP POST request >>> */
+coreHTTP.prototype.post = function(url, data, callback) {
+  this.http.open("POST", url);
+  this.http.setRequestHeader("content-type","application/json");
+
+  this.http.onload = () => {
+    if (this.http.status >= 200 && this.http.status <= 299) {
+      callback(null, this.http.responseText);
+    } else {
+      callback(`POST Error: ${this.http.status}`);
+    }
+  }
+
+  this.http.send(JSON.stringify(data));
+}
+
+/* <<< HTTP PUT request >>> */
+coreHTTP.prototype.put = function(url, data, callback) {
+  this.http.open("PUT", url);
+  this.http.setRequestHeader("content-type","application/json");
+
+  this.http.onload = () => {
+    if (this.http.status >= 200 && this.http.status <= 299) {
+      callback(null, this.http.responseText);
+    } else {
+      callback(`PUT Error: ${this.http.status}`);
+    }
+  }
+
+  this.http.send(JSON.stringify(data));
+}
+
+/* <<< HTTP DELETE request >>> */
+coreHTTP.prototype.delete = function(url, callback) {
+  this.http.open("DELETE", url);
+  
+  this.http.onload = () => {
+    if (this.http.status >= 200 && this.http.status <= 299) {
+      callback(null, "User Deleted");
+    } else {
+      callback(`DELETE Error: ${this.http.status}`);
+    }
+  }
+
+  this.http.send();  
+}
