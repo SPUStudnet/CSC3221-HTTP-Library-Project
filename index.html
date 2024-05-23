@@ -40,17 +40,19 @@
           <label for="route">Route:</label>
           <input type="url" name="url" id="route"
                   size="40"
-                  value="https://jsonplaceholder.typicode.com"
+                  value="https://jsonplaceholder.typicode.com/posts"
                   pattern="https://.*"
                   readonly>
         </div>
         <div id="uIdArea">
           <label for="userId">User ID:</label>
-          <input type="text" name="userId" size="3">
+          <!--Added ID for functionality with script.js-->
+          <input type="text" name="userId" id="userId" size="3">
         </div>
         <div id="uNameArea">
           <label for="uname">User Name:</label>
-          <input type="text" name="uname" size="30">
+          <!--Added ID for functionality with script.js-->
+          <input type="text" name="uname" id="uname" size="30">
         </div>
       </section>
       <fieldset>

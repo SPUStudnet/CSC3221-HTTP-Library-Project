@@ -1,42 +1,56 @@
-class coreHTTP{
+class coreHTTP {
+	// Request overarching method, used by all subordinate methods to construct a response.
+	async request(method, url, data = null) {
+		const config = {
+			method: "POST",
+			mode: "no-cors",
+			cache: "no-cache",
+			credentials: "same-origin",
+			// If we need data to be passed in request, specify the content as JSON.
+			headers: { "Content-Type": "application/json" },
+		};
 
-async request(method,url,data=null){
-  const config = {
-method: method,
-headers: data ? { 'Content-Type': 'application/json' } : {}
-  };
+		if (
+			data &&
+			(method === "POST" || method === "PUT" || method === "PATCH")
+		) {
+			config.body = JSON.stringify(data);
+		}
 
-if (data && (method==='POST' || method==='PUT'|| method==='PATCH')){
-  config.body = JSON.stringify(data);
-}
+		fetch(url)
+			.then((response) => response.json())
+			.then((json) => console.log(json));
 
-try{
-  const response = await fetch(url,config);
-  const responseData = await response.json();
-  return responseData;
-} catch(err){
-  console.log('HTTP Error', err);
-  throw err;
-}
-}
+		// Fetches a response from the url given the configuration.
+		const response = await fetch(url);
 
-async get(url){
-  return await this.request('GET',url);
-}
+		if (!response.ok) console.log(response.status);
 
-async post(url,data){
-  return await this.request('POST',url,data);
-}
+		// Get currently fails here, as the length of the .json response is zero.
+		const responseData = await response.json();
 
-async put(url,data){
-  return await this.request('PUT',url,data);
-}
+		return responseData;
+		console.log("HTTP Error", err);
+		throw err;
+	}
 
-async delete(url){
-  return await this.request('DELETE',url);
-}
+	async get(url) {
+		return await this.request("GET", url);
+	}
 
-async patch(url,data){
-  return await this.request('PATCH',url,data);
-}
+	async post(url, data) {
+		return await this.request("POST", url, data);
+	}
+
+	async put(url, data) {
+		return await this.request("PUT", url, data);
+	}
+
+	async delete(url) {
+		return await this.request("DELETE", url);
+	}
+
+	async patch(url, data) {
+		return await this.request("PATCH", url, data);
+	}
 }
