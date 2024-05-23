@@ -1,42 +1,57 @@
-class coreHTTP{
+class coreHttp {
+  constructor(baseURL) {
+    this.baseURL = baseURL;
+  }
 
-async request(method,url,data=null){
-  const config = {
-method: method,
-headers: data ? { 'Content-Type': 'application/json' } : {}
-  };
+  async request(method, route, params = {}, body = null) {
+    try {
+      let url = new URL(`${this.baseURL}${route}`);
+      Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
-if (data && (method==='POST' || method==='PUT'|| method==='PATCH')){
-  config.body = JSON.stringify(data);
+      const options = {
+        method: method.toUpperCase(),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
+
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+
+    } catch (error) {
+      console.error('Request failed', error);
+      return { error: error.message };
+    }
+  }
+
+  get(route, params = {}) {
+    return this.request('GET', route, params);
+  }
+
+  post(route, body) {
+    return this.request('POST', route, {}, body);
+  }
+
+  put(route, body) {
+    return this.request('PUT', route, {}, body);
+  }
+
+  delete(route, params = {}) {
+    return this.request('DELETE', route, params);
+  }
+
+  patch(route, body) {
+    return this.request('PATCH', route, {}, body);
+  }
 }
 
-try{
-  const response = await fetch(url,config);
-  const responseData = await response.json();
-  return responseData;
-} catch(err){
-  console.log('HTTP Error', err);
-  throw err;
-}
-}
-
-async get(url){
-  return await this.request('GET',url);
-}
-
-async post(url,data){
-  return await this.request('POST',url,data);
-}
-
-async put(url,data){
-  return await this.request('PUT',url,data);
-}
-
-async delete(url){
-  return await this.request('DELETE',url);
-}
-
-async patch(url,data){
-  return await this.request('PATCH',url,data);
-}
-}

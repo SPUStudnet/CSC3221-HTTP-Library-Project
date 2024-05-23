@@ -1,73 +1,44 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const httpCore = new coreHTTP(); // Ensure coreHTTP class is correctly defined
-  const form = document.getElementById('request-form');
-  const responseContainer = document.getElementById('response');
+document.addEventListener('DOMContentLoaded', () => {
+  const apiClient = new coreHttp('https://jsonplaceholder.typicode.com');
 
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    console.log("Form submitted!");
+  document.getElementById('request-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    // UI feedback: indicate loading process
-    responseContainer.innerHTML = "<p>Loading...</p>";
+    const method = document.querySelector('input[name="HTTPtype"]:checked').value.toUpperCase();
+    const userId = document.querySelector('input[name="userId"]').value;
+    const userName = document.querySelector('input[name="uname"]').value;
+    const route = '/posts';
 
-    // Retrieve values from form elements
-    const url = document.getElementById('route').value;
-    const reqType = document.querySelector('input[name="HTTPtype"]:checked').value;
-    const userId = document.getElementById('userId').value.trim();
-    const userName = document.getElementById('uname').value.trim();
+    let params = {};
+    let body = {};
 
-    // Construct the endpoint URL
-    let endpoint = url + (userId ? `/${userId}` : '');
-
-    // Prepare data object for POST, PUT, PATCH methods
-    let data = null;
-    if (['post', 'put', 'patch'].includes(reqType.toLowerCase())) {
-      if (!userName) {
-        responseContainer.textContent = "Error: User Name is required for POST, PUT, PATCH methods.";
-        return;
-      }
-      data = {
-        name: userName,
-        username: userName.split(' ')[0],
-        email: `${userName.split(' ')[0]}@example.com`
-      };
+    if (userId) {
+      params.userId = userId;
+    }
+    
+    if (userName) {
+      body.title = userName;
     }
 
-    // Function to process the response
-    const processResponse = (responseData) => {
-      console.log("Response Data:", responseData);
-      responseContainer.innerHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
-    };
-
-    // Function to handle errors
-    const handleError = (error) => {
-      console.error("Fetch error:", error);
-      responseContainer.textContent = `Error: ${error.message || error}`;
-    };
-
-    // Execute the appropriate fetch call based on the request type
-    try {
-      switch (reqType.toLowerCase()) {
-        case 'get':
-          processResponse(await httpCore.get(endpoint));
-          break;
-        case 'post':
-          processResponse(await httpCore.post(endpoint, data));
-          break;
-        case 'put':
-          processResponse(await httpCore.put(endpoint, data));
-          break;
-        case 'delete':
-          processResponse(await httpCore.delete(endpoint));
-          break;
-        case 'patch':
-          processResponse(await httpCore.patch(endpoint, data));
-          break;
-        default:
-          throw new Error('Unsupported request type');
-      }
-    } catch (err) {
-      handleError(err);
+    let response;
+    switch (method) {
+      case 'GET':
+        response = await apiClient.get(route, params);
+        break;
+      case 'POST':
+        response = await apiClient.post(route, body);
+        break;
+      case 'PUT':
+        response = await apiClient.put(`${route}/${userId}`, body);
+        break;
+      case 'DELETE':
+        response = await apiClient.delete(`${route}/${userId}`);
+        break;
+      case 'PATCH':
+        response = await apiClient.patch(`${route}/${userId}`, body);
+        break;
     }
+
+    document.getElementById('response').textContent = JSON.stringify(response, null, 2);
   });
 });
