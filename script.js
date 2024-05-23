@@ -1,4 +1,7 @@
+
+// When the entire page is loaded,
 document.addEventListener('DOMContentLoaded', () => {
+  // Instantiate the coreHTTP object, with the explicit test URL
   const apiClient = new coreHttp('https://jsonplaceholder.typicode.com');
 
   document.getElementById('request-form').addEventListener('submit', async (event) => {
