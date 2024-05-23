@@ -36,6 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
       };
     }
 
+    if (['delete'].includes(reqType.toLowerCase())) {
+      if (!userId) {
+        responseContainer.textContent = "Error: An Id is required for the DELETE method."
+        return;
+      }
+    }
+
     // Function to process the response
     const processResponse = (responseData) => {
       console.log("Response Data:", responseData);
