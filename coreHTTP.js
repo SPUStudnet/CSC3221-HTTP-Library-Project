@@ -1,57 +1,47 @@
-class coreHttp {
+class coreHTTP {
   constructor(baseURL) {
     this.baseURL = baseURL;
   }
 
-  async request(method, route, params = {}, body = null) {
+  async request(method, url, data = null) {
+    const config = {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+    };
+
+    if (data) {
+      config.body = JSON.stringify(data);
+    }
+
     try {
-      let url = new URL(`${this.baseURL}${route}`);
-      Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
-      const options = {
-        method: method.toUpperCase(),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-
-      if (body) {
-        options.body = JSON.stringify(body);
-      }
-
-      const response = await fetch(url, options);
-
+      const response = await fetch(url, config);
       if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
-      const data = await response.json();
-      return data;
-
-    } catch (error) {
-      console.error('Request failed', error);
-      return { error: error.message };
+      return await response.json();
+    } catch (err) {
+      console.error("Fetch error:", err);
+      throw err;
     }
   }
 
-  get(route, params = {}) {
-    return this.request('GET', route, params);
+  async get(url) {
+    return await this.request("GET", url);
   }
 
-  post(route, body) {
-    return this.request('POST', route, {}, body);
+  async post(url, data) {
+    return await this.request("POST", url, data);
   }
 
-  put(route, body) {
-    return this.request('PUT', route, {}, body);
+  async put(url, data) {
+    return await this.request("PUT", url, data);
   }
 
-  delete(route, params = {}) {
-    return this.request('DELETE', route, params);
+  async delete(url) {
+    return await this.request("DELETE", url);
   }
 
-  patch(route, body) {
-    return this.request('PATCH', route, {}, body);
+  async patch(url, data) {
+    return await this.request("PATCH", url, data);
   }
 }
-
