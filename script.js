@@ -1,4 +1,7 @@
+
+// When the entire page is loaded,
 document.addEventListener('DOMContentLoaded', function() {
+   // Instantiate the coreHTTP object, with the explicit test URL
   const httpCore = new coreHTTP('https://jsonplaceholder.typicode.com/posts'); 
   const form = document.getElementById('request-form');
   const responseContainer = document.getElementById('response');
