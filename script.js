@@ -42,16 +42,21 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    // Function to process the response
-    const processResponse = (responseData) => {
-      console.log("Response Data:", responseData);
-      let formattedData='';
-      for (let key in responseData) {
-        formattedData += `${key}: ${responseData[key]}\n`;
-      }
-      responseContainer.textContent = formattedData;
-      responseContainer.innerHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
-    };
+ // Function to process the response
+const processResponse = (responseData) => {
+  console.log("Response Data:", responseData);
+  let formattedData = '';
+  for (let key in responseData) {
+    if (responseData.hasOwnProperty(key)) {
+      // Capitalize the first letter of each key
+      const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
+      formattedData += `<span class="data-entry">${capitalizedKey}: ${responseData[key]}</span><br>`;
+    }
+  }
+  responseContainer.innerHTML = formattedData;
+};
+
+
 
     // Function to handle errors
     const handleError = (error) => {
