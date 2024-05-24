@@ -1,7 +1,6 @@
 
 // When the entire page is loaded,
 document.addEventListener('DOMContentLoaded', function() {
-   // Instantiate the coreHTTP object, with the explicit test URL
   const httpCore = new coreHTTP(document.getElementById("route").value); 
   const form = document.getElementById('request-form');
   const responseContainer = document.getElementById('response');
@@ -46,6 +45,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to process the response
     const processResponse = (responseData) => {
       console.log("Response Data:", responseData);
+      let formattedData='';
+      for (let key in responseData) {
+        formattedData += `${key}: ${responseData[key]}\n`;
+      }
+      responseContainer.textContent = formattedData;
       responseContainer.innerHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
     };
 
