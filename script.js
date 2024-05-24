@@ -42,19 +42,34 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
- // Function to process the response
+// Function to process and format the response data
 const processResponse = (responseData) => {
   console.log("Response Data:", responseData);
   let formattedData = '';
-  for (let key in responseData) {
-    if (responseData.hasOwnProperty(key)) {
-      // Capitalize the first letter of each key
-      const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1);
-      formattedData += `<span class="data-entry">${capitalizedKey}: ${responseData[key]}</span><br>`;
-    }
+  // Check if responseData is an array and handle it
+  if (Array.isArray(responseData)) {
+    responseData.forEach((item, index) => {
+      //formattedData += `Item ${index + 1}:\n`;
+      formattedData += formatObject(item);
+      formattedData += '\n'; // Separate items with a blank line
+    });
+  } else {
+    // Handle single object response
+    formattedData = formatObject(responseData);
   }
-  responseContainer.innerHTML = formattedData;
+  responseContainer.innerText = formattedData;
 };
+
+// Helper function to format each object
+const formatObject = (obj) => {
+  // Check if the object has 'userId' and 'id' properties
+  if (obj.hasOwnProperty('userId') && obj.hasOwnProperty('id')) {
+    return `User ${obj.userId}-${obj.id}\n`;
+  }
+  return '';
+};
+
+
 
 
 
