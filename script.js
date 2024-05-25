@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Function to process and format the response data
 const processResponse = (responseData) => {
   console.log("Response Data:", responseData);
+  
   let formattedData = '';
   // Check if responseData is an array and handle it
   if (Array.isArray(responseData)) {
@@ -58,6 +59,7 @@ const processResponse = (responseData) => {
     // Handle single object response
     formattedData = formatObject(responseData);
   }
+  responseContainer.innerText = responseContainer.innerText.replace("Loading...", "");
   responseContainer.innerText += formattedData;
 };
 
@@ -78,6 +80,10 @@ const formatObject = (obj) => {
 
     return ret;
 
+  }
+  else if (obj.hasOwnProperty('name') && obj.hasOwnProperty('id')) {
+    let ret = `User ${obj.id} - ${obj.name}`
+    return ret;
   }
   else {
     return JSON.stringify(obj);
