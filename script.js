@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const httpCore = new coreHTTP(document.getElementById("route").value); 
   const form = document.getElementById('request-form');
   const responseContainer = document.getElementById('response');
+  StartUp();
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -66,6 +67,9 @@ const formatObject = (obj) => {
   if (obj.hasOwnProperty('userId') && obj.hasOwnProperty('id')) {
     return `User ${obj.userId}-${obj.id}\n`;
   }
+  else {
+    return JSON.stringify(obj);
+  }
   return '';
 };
 
@@ -105,3 +109,42 @@ const formatObject = (obj) => {
     }
   });
 });
+
+
+function SetupInput(reqType) {
+  switch (reqType) {
+    case "get":
+      document.querySelector("#uIdArea").style.display = "flex";
+      document.querySelector("#uNameArea").style.display = "none";
+      break;
+    case "post":
+      document.querySelector("#uIdArea").style.display = "none";
+      document.querySelector("#uNameArea").style.display = "flex";
+      break;
+    case "put":
+      document.querySelector("#uIdArea").style.display = "flex";
+      document.querySelector("#uNameArea").style.display = "flex";
+      break;
+    case "delete":
+      document.querySelector("#uIdArea").style.display = "flex";
+      document.querySelector("#uNameArea").style.display = "none";
+      break;
+
+    case "patch":
+      document.querySelector("#uIdArea").style.display = "flex";
+      document.querySelector("#uNameArea").style.display = "flex";
+  }
+}
+
+function StartUp() {
+  // Setup the initial inputs
+  document.querySelector("#rbGet").checked = true;
+  SetupInput("get");
+  
+  // Add listeners for the radio buttons
+  document.querySelector("#rbGet").addEventListener("change", () => SetupInput("get"));
+  document.querySelector("#rbPost").addEventListener("change", () => SetupInput("post"));
+  document.querySelector("#rbPut").addEventListener("change", () => SetupInput("put"));
+  document.querySelector("#rbDelete").addEventListener("change", () => SetupInput("delete"));
+  document.querySelector("#rbPatch").addEventListener("change", () => SetupInput("patch"));
+};
