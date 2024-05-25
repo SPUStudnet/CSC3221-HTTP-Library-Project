@@ -58,14 +58,26 @@ const processResponse = (responseData) => {
     // Handle single object response
     formattedData = formatObject(responseData);
   }
-  responseContainer.innerText = formattedData;
+  responseContainer.innerText += formattedData;
 };
 
 // Helper function to format each object
 const formatObject = (obj) => {
   // Check if the object has 'userId' and 'id' properties
   if (obj.hasOwnProperty('userId') && obj.hasOwnProperty('id')) {
-    return `User ${obj.userId}-${obj.id}\n`;
+    let ret =  `User id: ${obj.userId}-${obj.id}`;
+
+    if (obj.hasOwnProperty('title')) {
+      ret += ` Title: ${obj.title}`;
+    }
+    else if (obj.hasOwnProperty('name')) {
+      ret += ` Name: ${obj.name}`;
+    }
+
+    ret += `\n`;
+
+    return ret;
+
   }
   else {
     return JSON.stringify(obj);
@@ -99,6 +111,7 @@ const formatObject = (obj) => {
           processResponse(await httpCore.delete(endpoint));
           break;
         case 'patch':
+          responseContainer.textContent = `Patched user data:  `;
           processResponse(await httpCore.patch(endpoint, data));
           break;
         default:
