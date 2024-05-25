@@ -115,6 +115,7 @@ const formatObject = (obj) => {
           break;
         case 'delete':
           processResponse(await httpCore.delete(endpoint));
+          responseContainer.textContent = `Entry deleted`;
           break;
         case 'patch':
           responseContainer.textContent = `Patched user data:  `;
